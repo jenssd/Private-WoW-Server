@@ -1,14 +1,16 @@
-# Offizielles AzerothCore-Repository
+# AzerothCore-Quellrepositories
 AzerothCore/Source/
+AzerothCore/Source-NPCBots/
 
-# Build-Artefakte
+# Build- und Installationsartefakte
 AzerothCore/Build/
 AzerothCore/Install/
+AzerothCore/Build-NPCBots/
+AzerothCore/Install-NPCBots/
 
-# Datenbanken
+# WoW-Client und große lokale Daten
+Client/
 Database/
-
-# Backups
 Backup/
 
 # Logs
@@ -21,12 +23,3 @@ Backup/
 
 # Temporäre Dateien
 *.tmp
-
-# WoW-Client und große Daten
-Client/
-Database/
-Backup/
-
-# AzerothCore Build
-AzerothCore/Build/
-AzerothCore/Install/

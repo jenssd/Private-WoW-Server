@@ -1,0 +1,27 @@
+# Build-Artefakte
+AzerothCore/Build/
+AzerothCore/Install/
+
+# Datenbanken
+Database/
+
+# Backups
+Backup/
+
+# Logs
+*.log
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+
+# Temporäre Dateien
+*.tmp
+
+# WoW-Client
+Client/
+
+# AzerothCore Build
+AzerothCore/Build/
+AzerothCore/Install/

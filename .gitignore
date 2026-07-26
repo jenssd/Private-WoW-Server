@@ -1,3 +1,6 @@
+# Offizielles AzerothCore-Repository
+AzerothCore/Source/
+
 # Build-Artefakte
 AzerothCore/Build/
 AzerothCore/Install/
@@ -19,8 +22,10 @@ Backup/
 # Temporäre Dateien
 *.tmp
 
-# WoW-Client
+# WoW-Client und große Daten
 Client/
+Database/
+Backup/
 
 # AzerothCore Build
 AzerothCore/Build/

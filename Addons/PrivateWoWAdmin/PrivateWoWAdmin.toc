@@ -2,7 +2,9 @@
 ## Title: PrivateWoWAdmin
 ## Notes: Klickbare GM- und NPCBot-Befehle fuer den lokalen AzerothCore-Server
 ## Author: Jens / ChatGPT
-## Version: 0.1.0
+## Version: 0.2.0
 ## SavedVariables: PrivateWoWAdminDB
 
+PrivateWoWAdminItemData.lua
+PrivateWoWAdminItems.lua
 PrivateWoWAdmin.lua

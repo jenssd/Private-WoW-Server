@@ -1,0 +1,8 @@
+## Interface: 30300
+## Title: PrivateWoWAdmin
+## Notes: Klickbare GM- und NPCBot-Befehle fuer den lokalen AzerothCore-Server
+## Author: Jens / ChatGPT
+## Version: 0.1.0
+## SavedVariables: PrivateWoWAdminDB
+
+PrivateWoWAdmin.lua

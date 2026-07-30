@@ -266,6 +266,79 @@ Beispiel:
 
 ---
 
+## Größere Taschen geben
+
+Zum Vergrößern des Inventars muss der Charakter nicht Schneidern lernen. Als GM können Taschen direkt über die Itemdatenbank oder per Serverbefehl hinzugefügt werden.
+
+### Über PrivateWoWAdmin suchen
+
+```text
+/pwai tasche
+```
+
+Alternativ mit dem englischen Suchbegriff:
+
+```text
+/pwai bag
+```
+
+Anschließend die gewünschte Tasche mit `+1` ins Inventar legen.
+
+### Taschen per GM-Befehl suchen
+
+```text
+.lookup item bag
+```
+
+Für WotLK-Taschen kann auch gezielter gesucht werden:
+
+```text
+.lookup item frostweave
+```
+
+Eine gefundene Tasche wird über ihre Item-ID gegeben:
+
+```text
+.additem <Item-ID> <Anzahl>
+```
+
+### Vier 20-Platz-Taschen geben
+
+Die Froststofftasche hat die Item-ID `41599`. Vier Exemplare werden so gegeben:
+
+```text
+.additem 41599 4
+```
+
+Danach die Taschen aus dem Inventar in die vier zusätzlichen Taschenplätze unten rechts ziehen.
+
+### Häufig verwendete Taschen
+
+```text
+21841  Netherstofftasche / Netherweave Bag           16 Plätze
+21843  Magieerfüllte Netherstofftasche                18 Plätze
+41599  Froststofftasche / Frostweave Bag              20 Plätze
+41600  Gletschertasche / Glacial Bag                  22 Plätze
+51809  Tragbares Loch / Portable Hole                 24 Plätze
+```
+
+Für normales Leveln sind vier Froststofftaschen ein guter Kompromiss zwischen Komfort und Spielgefühl:
+
+```text
+.additem 41599 4
+```
+
+### Wichtige Hinweise zu Taschen
+
+- Der ursprüngliche Rucksack ganz links kann nicht ersetzt werden.
+- Die vier zusätzlichen Taschenplätze können jeweils mit einer normalen Tasche belegt werden.
+- Banktaschenplätze müssen im Bankfenster gegebenenfalls zunächst gekauft werden.
+- Spezialtaschen für Kräuter, Erze oder Verzaubermaterial nehmen nur bestimmte Gegenstandstypen auf.
+- Normale Taschen sind für allgemeines Leveln am praktischsten.
+- Die 24-Platz-Tasche stammt aus spätem WotLK-Content und ist deutlich komfortabler als für frühe Level vorgesehen.
+
+---
+
 ## Questie-335
 
 Questie zeigt verfügbare Quests, Questgeber, Abgabeorte und Questziele auf Karte und Minimap an. Zusätzlich bietet es einen erweiterten Questtracker und eine Suche.

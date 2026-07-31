@@ -1,6 +1,6 @@
 # Addons – Installation, Aktualisierung und Nutzung
 
-Dieses Dokument beschreibt die aktuell verwendeten Addons und die dazugehörigen Skripte für den lokalen WoW-3.3.5a-Client.
+Dieses Dokument beschreibt die aktuell verwendeten Addons, Generatoren, Makros und dazugehörigen Skripte für den lokalen WoW-3.3.5a-Client.
 
 ## Grundregel
 
@@ -28,19 +28,14 @@ Ein einfaches `/reload` reicht bei geänderten `.toc`-Dateien oder neu hinzugef�
 
 ## PrivateWoWAdmin
 
-`PrivateWoWAdmin` ist das eigene Admin-Addon für GM-, NPCBot-, Item- und Level-Set-Funktionen.
+`PrivateWoWAdmin` ist das eigene Admin-Addon für GM-, NPCBot-, Teleport-, Item- und Level-Set-Funktionen.
 
 ### Installation oder Aktualisierung
 
 ```powershell
 cd D:\Private\WoW
 git pull
-```
-
-Danach:
-
-```text
-D:\Private\WoW\scripts\install-privatewowadmin-addon.bat
+.\scripts\install-privatewowadmin-addon.bat
 ```
 
 Anschließend WoW vollständig neu starten.
@@ -53,7 +48,7 @@ Anschließend WoW vollständig neu starten.
 /pwa
 ```
 
-Die Item-Datenbank kann zusätzlich direkt geöffnet werden mit:
+Die Item-Datenbank kann direkt geöffnet werden mit:
 
 ```text
 /pwai
@@ -73,15 +68,243 @@ Die Level-Sets können direkt geöffnet werden mit:
 /pwaset
 ```
 
+Die Teleportliste kann direkt geöffnet werden mit:
+
+```text
+/pwatele
+```
+
+Optional kann ein Suchbegriff mitgegeben werden:
+
+```text
+/pwatele crash
+```
+
 ### Enthaltene Bereiche
 
 - NPCBots verwalten
-- GM-Modus, God-Modus und Fliegen
-- Teleports
+- GM-Modus, God-Modus, Sichtbarkeit und Fliegen
+- feste Schnell-Teleports
+- kategorisierte Teleportdatenbank mit Kategorie-, Gebiets- und Ortsauswahl
 - beliebige Serverbefehle
 - zweisprachige Item-Suche
 - Items direkt ins Inventar legen
 - vorbereitete Level-Sets für Klassen und Skillungen
+
+---
+
+## GM- und Cheat-Befehle
+
+### GM-Modus
+
+```text
+.gm on
+.gm off
+```
+
+### God Mode
+
+AzerothCore stellt God Mode über `.cheat god` bereit, nicht über `.gm god`.
+
+Aktivieren:
+
+```text
+.cheat god on
+```
+
+Deaktivieren:
+
+```text
+.cheat god off
+```
+
+Cheat-Status anzeigen:
+
+```text
+.cheat status
+```
+
+Die Buttons `God an` und `God aus` in `PrivateWoWAdmin` verwenden diese Befehle.
+
+### Fliegen
+
+```text
+.gm fly on
+.gm fly off
+```
+
+### Sichtbarkeit
+
+```text
+.gm visible on
+.gm visible off
+```
+
+### Laufgeschwindigkeit
+
+Direkt setzen:
+
+```text
+.modify speed 1
+.modify speed 2
+.modify speed 3
+```
+
+Falls ein anderer Spieler oder Bot ausgewählt ist, kann der Befehl auf dieses Ziel wirken. Für den eigenen Charakter deshalb vorher das Ziel entfernen:
+
+```text
+/cleartarget
+```
+
+---
+
+## Makro: Laufgeschwindigkeit 1x → 2x → 3x
+
+Dieses Makro schaltet bei jedem Klick weiter:
+
+```text
+1. Klick → Speed 2
+2. Klick → Speed 3
+3. Klick → Speed 1
+4. Klick → Speed 2
+```
+
+Makroinhalt:
+
+```text
+#showtooltip
+/cleartarget
+/run pwaSpeed=(pwaSpeed or 1)%3+1;SendChatMessage(".modify speed "..pwaSpeed,"SAY");print("Laufspeed: "..pwaSpeed.."x")
+```
+
+Nach einem vollständigen Neustart oder `/reload` wird die Lua-Variable zurückgesetzt. Das Makro geht dann wieder von Speed `1` aus; der nächste Klick setzt Speed `2`.
+
+---
+
+## Teleportdatenbank und Teleportbrowser
+
+Die Teleportdatenbank wird aus der AzerothCore-Tabelle `game_tele` erzeugt. Zusätzlich werden die DBC-Dateien `AreaTable.dbc` und `WorldMapArea.dbc` verwendet, um Ziele nach Gebiet einzuordnen.
+
+### Datenquellen
+
+Weltdatenbank:
+
+```text
+acore_npcbots_world.game_tele
+```
+
+DBC-Verzeichnis:
+
+```text
+D:\Private\WoW\AzerothCore\Install-NPCBots\Data\dbc
+```
+
+Benötigte Dateien:
+
+```text
+AreaTable.dbc
+WorldMapArea.dbc
+```
+
+### Teleportdaten neu erzeugen
+
+```powershell
+cd D:\Private\WoW
+powershell -ExecutionPolicy Bypass -File .\scripts\generate-teleport-database.ps1
+```
+
+MySQL fragt dabei nach dem Root-Passwort.
+
+Die erzeugte Datei lautet:
+
+```text
+D:\Private\WoW\Addons\PrivateWoWAdmin\PrivateWoWAdminTeleportData.lua
+```
+
+Danach das Addon neu installieren:
+
+```powershell
+.\scripts\install-privatewowadmin-addon.bat
+```
+
+WoW anschließend vollständig neu starten.
+
+### Bedienung des Teleportbrowsers
+
+Öffnen über:
+
+```text
+/pwatele
+```
+
+Oder über den Button `Teleportliste` im Adminfenster.
+
+Die Auswahl ist hierarchisch aufgebaut:
+
+```text
+Kategorie
+→ Gebiet
+→ Ort
+```
+
+Beispiel:
+
+```text
+Kategorie: Outland and Burning Crusade Zones
+Gebiet: Azurmythosinsel
+Ort: CrashSite
+```
+
+Ablauf:
+
+1. Kategorie aus der Liste auswählen.
+2. Danach wird die Gebietsliste automatisch auf diese Kategorie gefiltert.
+3. Gebiet auswählen.
+4. Danach wird die Ortsliste automatisch auf dieses Gebiet gefiltert.
+5. Gewünschten Ort auswählen.
+6. `Teleportieren` klicken oder das Ziel doppelt anklicken.
+
+Die Gebietsnamen stammen nach Möglichkeit aus der deutschen DBC-Lokalisierung. Die eigentlichen Teleportnamen bleiben englisch, weil der Server diese Namen für `.tele` erwartet.
+
+### Ort zusätzlich filtern
+
+Nach Auswahl von Kategorie und Gebiet kann innerhalb der verbleibenden Orte gefiltert werden.
+
+Beispiele:
+
+```text
+crash
+azure
+ammen
+```
+
+### Teleportbefehle ohne Browser
+
+Teleport suchen:
+
+```text
+.lookup tele <englischer Suchtext>
+```
+
+Teleport ausführen:
+
+```text
+.tele <exakter Teleportname>
+```
+
+Beispiel:
+
+```text
+.tele CrashSite
+```
+
+### Wann die Teleportdaten neu erzeugen?
+
+- nach einem Update der AzerothCore-Weltdatenbank
+- wenn `game_tele` verändert wurde
+- wenn die generierte Lua-Datei fehlt
+- wenn neue Teleportziele nicht im Browser erscheinen
+- wenn sich DBC-Daten oder das Server-Datenverzeichnis geändert haben
 
 ---
 
@@ -232,8 +455,8 @@ MySQL fragt dabei nach dem Root-Passwort.
 
 Danach das Admin-Addon erneut installieren:
 
-```text
-D:\Private\WoW\scripts\install-privatewowadmin-addon.bat
+```powershell
+.\scripts\install-privatewowadmin-addon.bat
 ```
 
 Dann WoW neu starten.
@@ -339,6 +562,59 @@ Für normales Leveln sind vier Froststofftaschen ein guter Kompromiss zwischen K
 
 ---
 
+## Bagnon 3.3.5a
+
+Bagnon fasst alle Taschen in einem gemeinsamen Fenster zusammen. Dadurch werden die fünf einzelnen Taschen wie ein großes Inventar dargestellt.
+
+### Installation oder Neuinstallation
+
+```powershell
+cd D:\Private\WoW
+git pull
+powershell -ExecutionPolicy Bypass -File .\scripts\install-bagnon-335.ps1
+```
+
+Danach WoW vollständig neu starten.
+
+### Installierte Komponenten
+
+```text
+Bagnon
+Bagnon_Config
+Bagnon_Forever
+Bagnon_GuildBank
+Bagnon_Tooltips
+```
+
+`Bagnon_VoidStorage` wird nicht installiert, weil Void Storage nicht zu WoW 3.3.5a gehört.
+
+### Bedienung
+
+```text
+B
+```
+
+öffnet das gemeinsame Taschenfenster.
+
+Einstellungen:
+
+```text
+/bagnon
+```
+
+Je nach Backport stehen Suche, gemeinsame Taschenansicht, Anzeige anderer Charaktere und Sortierfunktionen zur Verfügung.
+
+### Falls Bagnon nicht geladen wird
+
+In der Charakterauswahl unten links `AddOns` öffnen und prüfen:
+
+- alle Bagnon-Komponenten aktiviert
+- bei Bedarf `Veraltete Addons laden` aktiviert
+- Addon-Ordner liegen direkt unter `Interface\AddOns`
+- WoW wurde nach der Installation vollständig neu gestartet
+
+---
+
 ## Questie-335
 
 Questie zeigt verfügbare Quests, Questgeber, Abgabeorte und Questziele auf Karte und Minimap an. Zusätzlich bietet es einen erweiterten Questtracker und eine Suche.
@@ -396,7 +672,7 @@ Das Skript startet nacheinander:
 2. NPCBots-Worldserver
 3. WoW-Client
 
-Das Addon- oder Questie-Installationsskript muss nicht vor jedem Spielstart ausgeführt werden.
+Die Addon-, Bagnon- oder Questie-Installationsskripte müssen nicht vor jedem Spielstart ausgeführt werden.
 
 ---
 
@@ -409,7 +685,7 @@ cd D:\Private\WoW
 git pull
 ```
 
-Wenn `PrivateWoWAdmin`, die Item-Datenbank-Oberfläche oder die Level-Sets geändert wurden:
+Wenn `PrivateWoWAdmin`, die Item-Datenbank-Oberfläche, der Teleportbrowser oder die Level-Sets geändert wurden:
 
 ```powershell
 cd D:\Private\WoW
@@ -424,6 +700,23 @@ cd D:\Private\WoW
 git pull
 powershell -ExecutionPolicy Bypass -File .\scripts\generate-item-database.ps1
 .\scripts\install-privatewowadmin-addon.bat
+```
+
+Wenn Teleportdaten, `game_tele` oder die DBC-Daten geändert wurden:
+
+```powershell
+cd D:\Private\WoW
+git pull
+powershell -ExecutionPolicy Bypass -File .\scripts\generate-teleport-database.ps1
+.\scripts\install-privatewowadmin-addon.bat
+```
+
+Wenn Bagnon installiert oder neu geladen werden soll:
+
+```powershell
+cd D:\Private\WoW
+git pull
+powershell -ExecutionPolicy Bypass -File .\scripts\install-bagnon-335.ps1
 ```
 
 Wenn Questie installiert oder neu geladen werden soll:
@@ -460,7 +753,13 @@ Weitere Prüfungen:
 - WoW nach der Installation wirklich komplett neu gestartet?
 - bei alten Addons gegebenenfalls `Veraltete Addons laden` aktivieren?
 - bei fehlenden Set-Items die Item-Datenbank neu erzeugt?
+- bei fehlenden Teleportzielen die Teleportdatenbank neu erzeugt?
+- bei God Mode wird wirklich `.cheat god on` beziehungsweise `.cheat god off` angezeigt?
 
-## Geplanter nächster Addon-Schritt
+## Geplante nächste Addon-Schritte
 
-Questie zunächst praktisch testen. Falls eine automatische Abarbeitungsreihenfolge oder ein Navigationspfeil fehlt, anschließend TomTom oder ein kompatibler QuestHelper für 3.3.5a prüfen. Die Level-Sets können parallel schrittweise um weitere Klassen, Skillungen und Levelbereiche erweitert werden.
+- Level-Sets um weitere Klassen, Skillungen und Levelbereiche erweitern
+- Teleportbrowser praktisch mit mehreren Regionen testen
+- unklare oder nicht zugeordnete Teleportziele prüfen
+- bei Bedarf Favoriten oder zuletzt verwendete Teleportziele ergänzen
+- Questie testen und bei Bedarf TomTom oder einen kompatiblen Navigationspfeil ergänzen

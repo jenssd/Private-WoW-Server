@@ -87,8 +87,16 @@ searchLabel:SetText("Ort filtern")
 
 local categoryIndex = 1
 local zoneIndex = 1
-local categoryButton
-local zoneButton
+local categoryDropDown = CreateFrame("Frame", "PrivateWoWAdminTeleportCategoryDropDown", frame, "UIDropDownMenuTemplate")
+categoryDropDown:SetPoint("TOPLEFT", frame, "TOPLEFT", 4, -69)
+UIDropDownMenu_SetWidth(categoryDropDown, 205)
+UIDropDownMenu_JustifyText(categoryDropDown, "LEFT")
+
+local zoneDropDown = CreateFrame("Frame", "PrivateWoWAdminTeleportZoneDropDown", frame, "UIDropDownMenuTemplate")
+zoneDropDown:SetPoint("TOPLEFT", frame, "TOPLEFT", 231, -69)
+UIDropDownMenu_SetWidth(zoneDropDown, 325)
+UIDropDownMenu_JustifyText(zoneDropDown, "LEFT")
+
 local searchInput = CreateInput(frame, 360, 18, -123)
 local searchButton
 local clearButton
@@ -150,20 +158,6 @@ local function RefreshRows()
     end
 end
 
-local function RefreshZoneButton()
-    local category = GetSelectedCategory()
-    if not category or not category.zones or #category.zones == 0 then
-        zoneIndex = 1
-        zoneButton:SetText("Keine Gebiete")
-        return
-    end
-
-    if zoneIndex > #category.zones then
-        zoneIndex = 1
-    end
-    zoneButton:SetText(category.zones[zoneIndex].name)
-end
-
 local function RunFilter()
     local category = GetSelectedCategory()
     local zone = GetSelectedZone()
@@ -190,38 +184,60 @@ local function RunFilter()
     RefreshRows()
 end
 
-categoryButton = CreateButton(frame, "", 210, 23, 18, -76, function()
-    local categories = GetCategories()
-    if #categories == 0 then
-        Print("Keine Teleportdaten geladen.")
-        return
-    end
-
-    categoryIndex = categoryIndex + 1
-    if categoryIndex > #categories then
-        categoryIndex = 1
-    end
-
-    zoneIndex = 1
-    categoryButton:SetText(categories[categoryIndex].name)
-    RefreshZoneButton()
-    RunFilter()
-end)
-
-zoneButton = CreateButton(frame, "", 342, 23, 245, -76, function()
+local function RefreshZoneDropDown()
     local category = GetSelectedCategory()
     if not category or not category.zones or #category.zones == 0 then
-        Print("Keine Gebiete in dieser Kategorie vorhanden.")
+        zoneIndex = 1
+        UIDropDownMenu_SetText(zoneDropDown, "Keine Gebiete")
         return
     end
 
-    zoneIndex = zoneIndex + 1
     if zoneIndex > #category.zones then
         zoneIndex = 1
     end
 
-    RefreshZoneButton()
-    RunFilter()
+    UIDropDownMenu_SetSelectedValue(zoneDropDown, zoneIndex)
+    UIDropDownMenu_SetText(zoneDropDown, category.zones[zoneIndex].name)
+end
+
+UIDropDownMenu_Initialize(categoryDropDown, function()
+    local categories = GetCategories()
+    for index, category in ipairs(categories) do
+        local info = UIDropDownMenu_CreateInfo()
+        info.text = category.name
+        info.value = index
+        info.checked = index == categoryIndex
+        info.func = function(self)
+            categoryIndex = self.value
+            zoneIndex = 1
+            UIDropDownMenu_SetSelectedValue(categoryDropDown, categoryIndex)
+            UIDropDownMenu_SetText(categoryDropDown, categories[categoryIndex].name)
+            RefreshZoneDropDown()
+            RunFilter()
+        end
+        UIDropDownMenu_AddButton(info)
+    end
+end)
+
+UIDropDownMenu_Initialize(zoneDropDown, function()
+    local category = GetSelectedCategory()
+    if not category or not category.zones then
+        return
+    end
+
+    for index, zone in ipairs(category.zones) do
+        local info = UIDropDownMenu_CreateInfo()
+        info.text = zone.name
+        info.value = index
+        info.checked = index == zoneIndex
+        info.func = function(self)
+            zoneIndex = self.value
+            UIDropDownMenu_SetSelectedValue(zoneDropDown, zoneIndex)
+            UIDropDownMenu_SetText(zoneDropDown, category.zones[zoneIndex].name)
+            RunFilter()
+        end
+        UIDropDownMenu_AddButton(info)
+    end
 end)
 
 searchButton = CreateButton(frame, "Filtern", 100, 23, 390, -123, RunFilter)
@@ -300,12 +316,13 @@ function PrivateWoWAdminTeleportBrowser.Refresh()
         if categoryIndex > #categories then
             categoryIndex = 1
         end
-        categoryButton:SetText(categories[categoryIndex].name)
+        UIDropDownMenu_SetSelectedValue(categoryDropDown, categoryIndex)
+        UIDropDownMenu_SetText(categoryDropDown, categories[categoryIndex].name)
     else
-        categoryButton:SetText("Keine Daten")
+        UIDropDownMenu_SetText(categoryDropDown, "Keine Daten")
     end
 
-    RefreshZoneButton()
+    RefreshZoneDropDown()
     RunFilter()
 end
 

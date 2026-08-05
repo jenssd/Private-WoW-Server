@@ -35,17 +35,16 @@ Die Itemausgabe erfolgt bewusst zeitversetzt, damit der Server die Befehle siche
 
 Im Heilig-Paladin-Gear ersetzen `19345` (Aegis of Preservation) und `17105` (Aurastone Hammer) die lokal nicht nutzbaren IDs `19312` und `19360`.
 
-## Raid vorbereiten
+## Gruppe und Raid vorbereiten
 
-Zuerst alle Bots als normale Gruppenmitglieder aufnehmen. Danach im Vorlagenfenster `Raid vorbereiten` klicken.
+Die Erstellung der Gruppe und die Umwandlung in einen Raid erfolgen ausschliesslich manuell:
 
-Der Button:
+1. Beim NPCBot-Gossip `Create Group (all bots)` auswaehlen.
+2. Die entstandene Gruppe ueber die Blizzard-UI manuell in einen Raid umwandeln.
+3. Pruefen, ob die Bots weiterhin echte Gruppenmitglieder sind und auf Rechtsklick/Fokus reagieren.
+4. Im Vorlagenfenster `Raid vorbereiten` klicken. Dieser Button sendet nur `.npcbot command follow` und `.npcbot recall teleport`.
 
-- wandelt eine bestehende Gruppe in einen Raid um,
-- setzt alle NPCBots auf Follow,
-- ruft die Bots zur aktuellen Position zurueck.
-
-Falls bereits ein Raid besteht, werden nur Follow und Recall ausgefuehrt.
+Das Addon nimmt keine Raid-Konvertierung, Rollenvergabe, Befoerderung oder Manipulation der Blizzard-Raidframes vor. Falls bereits ein Raid besteht, werden ebenfalls nur Follow und Recall ausgefuehrt.
 
 ## Automatisierungsgrenzen
 
@@ -61,6 +60,6 @@ Beim ersten Test kontrollieren:
 - waehlt Auto-equip die vorgesehene Waffe beziehungsweise das Schild,
 - haelt der Schutz-Krieger die Aggro,
 - heilt und reinigt der Heilig-Paladin verlaesslich,
-- folgen alle Bots nach der Raid-Konvertierung.
+- bleiben die Bots nach der manuellen Raid-Konvertierung echte Gruppenmitglieder und folgen anschliessend.
 
 Die Raidvorlage behebt nicht automatisch ein moegliches Eintrittsproblem der NPCBots bei Molten Core oder Blackwing Lair. Dieses Problem wird nach erfolgreicher Konfiguration erneut getestet.

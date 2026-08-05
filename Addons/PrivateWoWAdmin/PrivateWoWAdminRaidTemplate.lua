@@ -98,7 +98,7 @@ local intro = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 intro:SetPoint("TOPLEFT", frame, "TOPLEFT", 18, -52)
 intro:SetWidth(640)
 intro:SetJustifyH("LEFT")
-intro:SetText("Bot als Ziel waehlen und Konfigurieren klicken. Den Spec bitte vorher oder danach manuell setzen; das Addon gibt nur das vorbereitete Gear aus. Danach beim Bot: Manage equipment -> Auto-equip.")
+intro:SetText("Bot als Ziel waehlen und Konfigurieren klicken. Den Spec bitte manuell setzen; das Addon gibt nur das vorbereitete Gear aus. Gruppe/Raid ausschliesslich ueber NPCBot-Gossip und Blizzard-UI erstellen. Danach beim Bot: Manage equipment -> Auto-equip.")
 
 local status = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 status:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 18, 48)
@@ -158,15 +158,11 @@ for index, role in ipairs(roles) do
 end
 
 CreateButton(frame, "Raid vorbereiten", 145, 28, 18, -455, function()
-    if GetNumRaidMembers() == 0 and GetNumPartyMembers() > 0 then
-        ConvertToRaid()
-        Print("Gruppe wurde in einen Raid umgewandelt.")
-    elseif GetNumRaidMembers() == 0 then
-        Print("Zuerst Bots in eine normale Gruppe aufnehmen.")
-    end
     SendCommand(".npcbot command follow")
     SendCommand(".npcbot recall teleport")
-    status:SetText("Raid vorbereitet: Follow und Recall wurden gesendet.")
+    status:SetText("Follow und Recall gesendet. Gruppe/Raid bitte manuell erstellen.")
+    Print("Zuerst ueber NPCBot-Gossip 'Create Group (all bots)' waehlen, danach ueber die Blizzard-UI manuell in einen Raid umwandeln.")
+    Print("Anschliessend pruefen, ob die Bots noch echte Gruppenmitglieder sind.")
 end)
 
 CreateButton(frame, "Follow + Recall", 145, 28, 175, -455, function()

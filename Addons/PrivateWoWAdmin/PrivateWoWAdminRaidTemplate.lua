@@ -26,7 +26,6 @@ local roles = {
         key = "tank",
         label = "Tank: Schutz-Krieger",
         classToken = "WARRIOR",
-        spec = 3,
         note = "Aggro halten, Gegner sammeln und Zauber unterbrechen.",
         items = { 16963, 16961, 19386, 16966, 16959, 16964, 16960, 16962, 16965, 19383, 19376, 19431, 19406, 19341, 19335, 19349 }
     },
@@ -34,15 +33,13 @@ local roles = {
         key = "healer",
         label = "Heiler: Heilig-Paladin",
         classToken = "PALADIN",
-        spec = 1,
         note = "Tank priorisieren und bannbare Magie-, Gift- und Krankheitseffekte reinigen.",
-        items = { 16955, 16953, 19378, 16958, 16951, 16956, 16952, 16954, 16957, 19371, 19382, 19397, 19395, 19312, 19360, 19348 }
+        items = { 16955, 16953, 19378, 16958, 16951, 16956, 16952, 16954, 16957, 19371, 19382, 19397, 19395, 19345, 17105, 19348 }
     },
     {
         key = "rogue",
         label = "DD: Kampf-Schurke",
         classToken = "ROGUE",
-        spec = 2,
         note = "Physischer Nahkampfschaden, Tritt und Betäubungen.",
         items = { 16908, 16832, 19398, 16905, 16911, 16907, 16910, 16909, 16906, 19377, 18821, 19384, 19406, 22954, 19351, 19352 }
     },
@@ -50,7 +47,6 @@ local roles = {
         key = "fury",
         label = "DD: Furor-Krieger",
         classToken = "WARRIOR",
-        spec = 2,
         note = "Dauerhafter physischer Schaden; auf Level 60 zwei Einhandwaffen verwenden.",
         items = { 16963, 16961, 19398, 16966, 16959, 16964, 16960, 16962, 16965, 19377, 18821, 19384, 19406, 22954, 22808, 23242 }
     },
@@ -58,7 +54,6 @@ local roles = {
         key = "hunter",
         label = "DD: Treffsicherheits-Jaeger",
         classToken = "HUNTER",
-        spec = 2,
         note = "Physischer Fernkampfschaden; bleibt bei Silence voll einsatzfaehig.",
         items = { 16939, 16937, 19398, 16942, 16935, 16940, 16936, 16938, 16941, 19377, 18821, 19384, 19406, 22954, 19361, 19368 }
     }
@@ -103,7 +98,7 @@ local intro = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 intro:SetPoint("TOPLEFT", frame, "TOPLEFT", 18, -52)
 intro:SetWidth(640)
 intro:SetJustifyH("LEFT")
-intro:SetText("Bot als Ziel waehlen und Konfigurieren klicken. Das Addon setzt den Spec und legt das vorbereitete Gear in dein Inventar. Danach beim Bot: Manage equipment -> Auto-equip.")
+intro:SetText("Bot als Ziel waehlen und Konfigurieren klicken. Den Spec bitte vorher oder danach manuell setzen; das Addon gibt nur das vorbereitete Gear aus. Danach beim Bot: Manage equipment -> Auto-equip.")
 
 local status = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 status:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 18, 48)
@@ -133,7 +128,6 @@ local function ConfigureRole(role)
         return
     end
 
-    SendCommand(".npcbot set spec " .. role.spec)
     pendingRole = role
     queuedItems = {}
     for _, itemId in ipairs(role.items) do
@@ -141,7 +135,8 @@ local function ConfigureRole(role)
     end
 
     ClearTarget()
-    status:SetText(role.label .. ": Spec gesetzt; " .. #queuedItems .. " Gegenstaende werden ausgegeben...")
+    status:SetText(role.label .. ": Spec manuell setzen; " .. #queuedItems .. " Gegenstaende werden ausgegeben...")
+    Print(role.label .. ": Spec bitte manuell setzen. Das Addon sendet keine automatische Spec-Konfiguration.")
     Print("Nach der Ausgabe den Bot rechtsklicken: Manage equipment -> Auto-equip.")
 end
 

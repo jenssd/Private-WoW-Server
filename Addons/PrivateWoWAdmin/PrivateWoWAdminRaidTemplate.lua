@@ -28,7 +28,7 @@ local roles = {
         classToken = "WARRIOR",
         spec = 3,
         note = "Aggro halten, Gegner sammeln und Zauber unterbrechen.",
-        items = { 16963, 16961, 19386, 16966, 16959, 16964, 16960, 16962, 16965, 19383, 19376, 19431, 19406, 19341, 19349, 193盾 }
+        items = { 16963, 16961, 19386, 16966, 16959, 16964, 16960, 16962, 16965, 19383, 19376, 19431, 19406, 19341, 19335, 19349 }
     },
     {
         key = "healer",
@@ -63,9 +63,6 @@ local roles = {
         items = { 16939, 16937, 19398, 16942, 16935, 16940, 16936, 16938, 16941, 19377, 18821, 19384, 19406, 22954, 19361, 19368 }
     }
 }
-
--- Korrektur: Schild fuer den Tank. Lua kann keine symbolischen IDs enthalten.
-roles[1].items[16] = 19349
 
 local queuedItems = {}
 local queueElapsed = 0

@@ -1,0 +1,15 @@
+Wir optimieren wieder Raid-Gear für meinen privaten AzerothCore-3.3.5a-Server.
+
+Klasse: Paladin
+Skillung: Retribution
+Level: 60, 70 und 80
+Ziel: möglichst hoher und robuster Boss-DPS.
+
+Nutze den Workflow aus der beigefügten WoW-3.3.5a-Raid-Gear-README.
+
+Gib mir zuerst die notwendigen SQL-Abfragen für meine lokale
+acore_npcbots_world.item_template.
+
+Ich führe sie aus und lade dir die TXT-Dumps hoch.
+Danach erstellst du die finalen Markdown-Gear-Dateien mit ItemIDs,
+Caps, Gems, Enchants, Waffenwahl und .additem-Blöcken.

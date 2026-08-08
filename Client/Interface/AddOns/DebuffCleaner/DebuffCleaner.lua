@@ -48,10 +48,6 @@ local subtitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"
 subtitle:SetPoint("TOPRIGHT", -16, -18)
 subtitle:SetText("Klick = .unaura")
 
-local emptyText = frame:CreateFontString(nil, "OVERLAY", "GameFontDisable")
-emptyText:SetPoint("TOPLEFT", 18, -48)
-emptyText:SetText("Keine aktiven Debuffs.")
-
 local rows = {}
 
 local function FormatRemaining(duration, expirationTime)
@@ -78,12 +74,13 @@ for i = 1, MAX_DEBUFFS do
     button:SetPoint("TOPRIGHT", -14, -42 - ((i - 1) * ROW_HEIGHT))
     button:RegisterForClicks("AnyUp")
 
-    -- Static macro per aura slot. The macro text never changes in combat.
-    -- On click it targets the player, reads the current debuff in this slot,
-    -- sends .unaura <spellId>, and restores the previous target.
+    -- The secure macro is static and therefore combat-safe. Each row always
+    -- represents one UnitDebuff slot. On click it briefly targets the player,
+    -- resolves the CURRENT spell id in that slot, sends .unaura <spellId>, and
+    -- restores the previous target. No secure attribute is changed in combat.
     button:SetAttribute("type", "macro")
     button:SetAttribute("macrotext", string.format(
-        "/target player\n/run local _,_,_,_,_,_,_,_,_,_,id=UnitDebuff(\"player\",%d); if id then SendChatMessage(\".unaura \"..id,\"SAY\") end\n/targetlasttarget",
+        "/target [@player]\n/run local _,_,_,_,_,_,_,_,_,_,id=UnitDebuff(\"player\",%d); if id then SendChatMessage(\".unaura \"..id,\"SAY\") end\n/targetlasttarget",
         i
     ))
 
@@ -129,27 +126,28 @@ for i = 1, MAX_DEBUFFS do
 end
 
 local function UpdateDebuffs()
-    local visible = 0
-
     for i = 1, MAX_DEBUFFS do
         local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitDebuff("player", i)
         local row = rows[i]
 
         if name then
-            visible = visible + 1
             row.spellId = spellId
             row.icon:SetTexture(icon)
+            row.icon:SetAlpha(1)
             row.nameText:SetText(name .. (count and count > 1 and (" x" .. count) or ""))
+            row.nameText:SetTextColor(1, 1, 1)
             row.timeText:SetText(FormatRemaining(duration, expirationTime))
-            row:Show()
         else
+            -- Keep the secure button itself visible at all times. Hiding or
+            -- showing protected buttons from insecure code during combat is
+            -- restricted by the WoW client. Empty rows simply become inert.
             row.spellId = nil
-            row:Hide()
+            row.icon:SetTexture(nil)
+            row.nameText:SetText(i == 1 and "Keine aktiven Debuffs" or "")
+            row.nameText:SetTextColor(0.45, 0.45, 0.45)
+            row.timeText:SetText("")
         end
     end
-
-    emptyText:SetShown(visible == 0)
-    frame:SetHeight(math.max(82, 54 + (math.max(1, visible) * ROW_HEIGHT)))
 end
 
 local eventFrame = CreateFrame("Frame")
@@ -168,6 +166,11 @@ eventFrame:SetScript("OnEvent", function(self, event, unit)
                 DebuffCleanerDB.y or 0
             )
         end
+
+        if DebuffCleanerDB.hidden then
+            frame:Hide()
+        end
+
         UpdateDebuffs()
         Print("geladen. Aktive Debuffs werden automatisch angezeigt.")
         return
@@ -180,7 +183,7 @@ eventFrame:SetScript("OnEvent", function(self, event, unit)
     UpdateDebuffs()
 end)
 
--- Refresh durations without touching secure attributes.
+-- Refresh durations and row text only. Secure attributes remain untouched.
 local elapsed = 0
 frame:SetScript("OnUpdate", function(self, delta)
     elapsed = elapsed + delta
@@ -195,6 +198,11 @@ SLASH_DEBUFFCLEANER2 = "/dc"
 SlashCmdList["DEBUFFCLEANER"] = function(message)
     message = string.lower((message or ""):match("^%s*(.-)%s*$"))
 
+    if InCombatLockdown() and (message == "hide" or message == "show" or message == "" or message == "reset") then
+        Print("Fensterposition/-sichtbarkeit bitte ausserhalb des Kampfes aendern.")
+        return
+    end
+
     if message == "hide" then
         frame:Hide()
         DebuffCleanerDB.hidden = true
@@ -204,10 +212,6 @@ SlashCmdList["DEBUFFCLEANER"] = function(message)
         DebuffCleanerDB.hidden = false
         UpdateDebuffs()
     elseif message == "reset" then
-        if InCombatLockdown() then
-            Print("Position kann im Kampf nicht zurueckgesetzt werden.")
-            return
-        end
         frame:ClearAllPoints()
         frame:SetPoint("CENTER", UIParent, "CENTER", 360, 40)
         DebuffCleanerDB.point = nil
@@ -221,11 +225,3 @@ SlashCmdList["DEBUFFCLEANER"] = function(message)
         Print("Befehle: /dc, /dc show, /dc hide, /dc reset")
     end
 end
-
-local visibilityFrame = CreateFrame("Frame")
-visibilityFrame:RegisterEvent("PLAYER_LOGIN")
-visibilityFrame:SetScript("OnEvent", function()
-    if DebuffCleanerDB.hidden then
-        frame:Hide()
-    end
-end)

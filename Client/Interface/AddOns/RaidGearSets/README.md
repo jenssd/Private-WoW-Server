@@ -51,9 +51,35 @@ Laufende Ausgabe abbrechen:
 - Jeder Slash-Befehl startet genau ein Set.
 - Die `.additem`-Kommandos werden mit 0,20 Sekunden Abstand gesendet.
 - Waehrend ein Set laeuft, wird kein zweites gestartet.
-- Gems aus den Gear-Listen werden ebenfalls hinzugefuegt.
-- Enchants werden nicht automatisch angewendet.
+- Gear und benoetigte Gems werden hinzugefuegt.
+- Passende Major-/Minor-Glyphen fuer das jeweilige Level und die Skillung werden ebenfalls hinzugefuegt.
+- Passende Verzauberungsrollen werden ebenfalls ins Inventar gelegt.
+- Glyphen und Verzauberungsrollen werden **nicht automatisch angewendet**; sie liegen danach im Inventar und werden manuell benutzt.
 - Das Addon prueft nicht, ob ein einzelnes `.additem` serverseitig fehlgeschlagen ist.
+
+## Glyphen
+
+### Elementar
+
+- Level 60: Glyph of Lightning Bolt, Glyph of Totem of Wrath
+- Level 70: Glyph of Lightning Bolt, Glyph of Lava
+- Level 80: Glyph of Lightning Bolt, Glyph of Lava, Glyph of Totem of Wrath
+- Minor: Water Shield, Renewed Life; ab Level 70 zusaetzlich Water Walking
+
+### Verstaerker
+
+- Level 60/70: Glyph of Stormstrike, Glyph of Feral Spirit
+- Level 80: fuer das im Addon verwendete Spellhance-Setup Glyph of Stormstrike, Glyph of Fire Nova, Glyph of Flametongue Weapon
+- Minor: Water Shield, Renewed Life; ab Level 70 zusaetzlich Water Walking
+
+## Verzauberungsrollen
+
+Die Rollen sind auf die jeweilige Set-/Cap-Planung abgestimmt. Beispiele:
+
+- Elementar: Greater Speed, Powerful Stats, Superior Spellpower, Exceptional Spellpower bzw. Precision, Icewalker/Tuskarr's Vitality, Mighty Spellpower, auf Level 80 zusaetzlich Greater Intellect fuer das Schild.
+- Verstaerker: Greater Speed, Powerful Stats, Expertise bzw. Greater Assault, Precision/Crusher, Icewalker/Tuskarr's Vitality und Berserking fuer beide Waffen.
+
+Wichtig: Einige Verzauberungen veraendern Hit oder Expertise. Deshalb nicht wahllos Rollen zwischen den Sets tauschen, da die Gem-/Cap-Rechnung des jeweiligen Sets darauf abgestimmt ist.
 
 ## Hinweis zu Level 80
 
@@ -64,3 +90,12 @@ Falls diese ID auf der lokalen AzerothCore-Installation nicht vorhanden ist, mus
 ## Neue Klassen / Sets ergaenzen
 
 Neue Sets koennen in `RaidGearSets.lua` im Tabellenblock `sets` hinzugefuegt werden. Jedes Set besteht aus einem Namen und einer Liste kompletter GM-Kommandos.
+
+Fuer neue Klassen sollte der gleiche Aufbau verwendet werden:
+
+```text
+Gear
+Gems
+Glyphen passend zum Level
+Verzauberungsrollen passend zur finalen Cap-Rechnung
+```

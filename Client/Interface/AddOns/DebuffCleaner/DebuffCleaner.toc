@@ -1,0 +1,8 @@
+## Interface: 30300
+## Title: DebuffCleaner
+## Notes: Shows active player debuffs and removes a clicked debuff via AzerothCore .unaura.
+## Author: Jens / ChatGPT
+## Version: 1.0.0
+## SavedVariables: DebuffCleanerDB
+
+DebuffCleaner.lua
